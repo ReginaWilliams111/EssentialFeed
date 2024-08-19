@@ -91,4 +91,7 @@ fastlane/test_output
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
 
+# Ignore macOS system files
+**/.DS_Store
+
 # End of https://www.gitignore.io/api/swift,xcode
