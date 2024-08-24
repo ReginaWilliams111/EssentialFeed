@@ -26,7 +26,7 @@ public final class RemoteFeedLoader {
     }
     
     // we are able to set a default closure here so we don't break other tests
-    public func load(completion: @escaping (Error) -> Void = { _ in }) {
+    public func load(completion: @escaping (Error) -> Void) {
         client.get(from: url) { error in
             completion(.connectivity)
         }
