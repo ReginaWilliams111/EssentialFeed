@@ -25,6 +25,11 @@ public final class RemoteFeedLoader {
         case connectivity
         case invalidData
     }
+    
+    public enum Result: Equatable {
+        case success([FeedItem])
+        case failure(Error)
+    }
         
     public init(url: URL, client: HTTPClient) {
         self.client = client
@@ -32,13 +37,13 @@ public final class RemoteFeedLoader {
     }
     
     // we are able to set a default closure here so we don't break other tests
-    public func load(completion: @escaping (Error) -> Void) {
+    public func load(completion: @escaping (Result) -> Void) {
         client.get(from: url) { result in
             switch result {
             case .success:
-                completion(.invalidData)
+                completion(.failure(.invalidData))
             case .failure:
-                completion(.connectivity)
+                completion(.failure(.connectivity))
             }
         }
     }
