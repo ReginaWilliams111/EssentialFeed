@@ -8,6 +8,7 @@
 import XCTest
 import EssentialFeed
 
+typealias JSONDictionary = [String : Any]
 
 class RemoteFeedLoaderTests: XCTestCase {
     
@@ -78,7 +79,45 @@ class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
-    
+    func test_load_deliversNoItemsOn200HTTPResponseWithJSONIteams() {
+        let (sut, client) = makeSUT()
+        
+        let item1 = FeedItem(
+            id: UUID(),
+            description: nil,
+            location: nil,
+            imageURL: URL(string: "http://a-url.com")!)
+        
+        let itemJSON: JSONDictionary = [
+            "id" : item1.id.uuidString,
+            "image" : "http://a-url.com"
+        ]
+        
+        let item2 = FeedItem(
+            id: UUID(),
+            description: "a description",
+            location: "a location",
+            imageURL: URL(string: "http://another-url.com")!)
+        
+        let item2JSON: JSONDictionary = [
+            "id" : item2.id.uuidString,
+            "image" : "http://another-url.com",
+            "description": "a description",
+            "location" :"a location"
+        ]
+        
+        let itemsJSON: JSONDictionary = [
+            "items": [
+                itemJSON,
+                item2JSON
+            ]
+        ]
+        
+        expect(sut, toCompleteWith: .success([item1, item2]), when:  {
+            let json = try! JSONSerialization.data(withJSONObject: itemsJSON)
+            client.complete(withStatusCode: 200, data: json)
+        })
+    }
     
     // MARK: - Helpers
     
@@ -106,7 +145,6 @@ class RemoteFeedLoaderTests: XCTestCase {
         }
         
         func get(from url: URL, completion: @escaping (HTTPClientResult) -> Void)  {
-            
             messages.append((url, completion))
         }
         
