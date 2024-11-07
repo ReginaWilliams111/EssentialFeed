@@ -23,7 +23,8 @@ class URLSessionHTTPClientTests: XCTestCase {
     func test_getFromURL_performGetRequestWithURL() {
         let url = anyURL()
         let exp = expectation(description: "Wait for request")
-        var requestFulfilled = false // Add a flag to ensure fulfill() is called only once
+        // Add a flag to ensure fulfill() is called only once
+        var requestFulfilled = false
             
             URLProtocolStub.observeRequests { request in
                 // Added condition to fix crash where fulfilled was being called more than once.
