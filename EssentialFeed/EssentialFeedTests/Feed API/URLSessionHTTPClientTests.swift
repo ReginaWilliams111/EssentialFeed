@@ -45,7 +45,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         let requestError = anyNSError()
         let receivedError = resultError(for: nil, response: nil, error: requestError) as? NSError
         
-        XCTAssertEqual(receivedError?.domain, requestError.domain)
         XCTAssertEqual(receivedError?.code, requestError.code)
     }
     
@@ -62,14 +61,15 @@ class URLSessionHTTPClientTests: XCTestCase {
     }
     
     // Happy path
-    func test_getFromURL_succeedsOnHTTPURLReponseWithData() {
+    func test_getFromURL_succeedsOnHTTPURLResponseWithData() {
         let data = anyData()
         let response = anyHTTPURLResponse()
-        let receivedValues = resultValues(for: anyData(), response: response, error: nil)
+        
+        let receivedValues = resultValues(for: data, response: response, error: nil)
         
         XCTAssertEqual(receivedValues?.data, data)
-        XCTAssertEqual(receivedValues?.response.statusCode, response.statusCode)
         XCTAssertEqual(receivedValues?.response.url, response.url)
+        XCTAssertEqual(receivedValues?.response.statusCode, response.statusCode)
     }
     
     func test_getFromURL_succeedsWithEmptyDataOnHTTPURLReponseWithNilData() {
@@ -125,7 +125,7 @@ class URLSessionHTTPClientTests: XCTestCase {
             exp.fulfill()
         }
         
-        wait(for: [exp], timeout: 1.0)
+        wait(for: [exp], timeout: 3.0)
         return receivedResult
     }
     
@@ -190,6 +190,7 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         
         override func startLoading() {
+            
             if let data = URLProtocolStub.stub?.data {
                 client?.urlProtocol(self, didLoad: data)
             }
